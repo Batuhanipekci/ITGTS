@@ -1,14 +1,12 @@
-setwd( "C:/Users/McM-02859/Documents/Thesis")
 library(survival)
 library(mlr)
-library("rms")
-library("survminer")
+library(rms)
+library(survminer)
 data = read.csv("ultimate_data/surv_data_season.csv")
 
 data = data[,-c(1,31)]
 set.seed(123)
-#idx = sample(1:nrow(data), nrow(data)/5)  
-#data = data[idx,]
+
 survival_target <- c("weeks_on_market","status")
 features_surv <- names(data)[!(names(data) %in% c(survival_target,"object_type_ordinal") )]
 
@@ -19,7 +17,6 @@ summary(cox_model)
 
 # Linearity Assumption
 dev.off()
-#par(mfrow=c(4,3))
 p1[[1]]
 p2[[1]]
 p3[[1]]
@@ -46,7 +43,6 @@ grid.arrange( p1[[1]],  p2[[1]],
               nrow = 3)
 
 
-#arrange_ggsurvplots( p1[[1]],p2)
 plot_list = list()
 plot_list[[1]]=ggcoxfunctional(Surv(weeks_on_market, status) ~ DOP, data = data)
 plot_list[[2]]=ggcoxfunctional(Surv(weeks_on_market, status) ~ expected_price_sqm, data = data, xlab = "Expected Price per square meter")
@@ -58,7 +54,6 @@ plot_list[[7]]=ggcoxfunctional(Surv(weeks_on_market, status) ~ construction_year
 plot_list[[8]]=ggcoxfunctional(Surv(weeks_on_market, status) ~ zip_market_size, data = data,xlab = "Market Size (Zip Code)")
 plot_list[[9]]=ggcoxfunctional(Surv(weeks_on_market, status) ~ city_distance, data = data,xlab = "Distance to the City Centroid")
 plot_list[[10]]=ggcoxfunctional(Surv(weeks_on_market, status) ~ time_online, data = data,xlab = "Time of First Advertisement")
-#plot_list[[11]]=ggcoxfunctional(Surv(weeks_on_market, status) ~ zip_population, data = data,xlab= "Population (Zip Code)")
 plot_list[[11]]=ggcoxfunctional(Surv(weeks_on_market, status) ~ zip_population_density, data = data,xlab= "Population Density (Zip Code)")
 datalist = list()
 
@@ -86,21 +81,6 @@ ph$stars = ifelse(ph$p<=0.001, "***",
                          ifelse(ph$p>0.01 & ph$p<=0.05, "*"," ")))
 
 #ggcoxzph(test.ph)
-
-
-
-
-library(survminer)
-ggcoxdiagnostics(cox_model,type = "schoenfeld")
-
-
-
-#
-ggcoxdiagnostics(cox_model,type = "deviance")
-
-
-ggcoxdiagnostics(cox_model,type = "deviance")
-
 
 
 
